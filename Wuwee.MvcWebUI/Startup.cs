@@ -38,9 +38,13 @@ namespace Wuwee.MvcWebUI
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
+
 			services.AddDefaultIdentity<IdentityUser>()
+			//services.AddIdentity<ApplicationUser, IdentityRole>()
 				.AddDefaultUI(UIFramework.Bootstrap4)
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+				.AddEntityFrameworkStores<ApplicationDbContext>()
+				.AddDefaultTokenProviders();
+
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
@@ -66,11 +70,16 @@ namespace Wuwee.MvcWebUI
 
 			app.UseAuthentication();
 
+			//app.UseIdentity();
+
 			app.UseMvc(routes =>
-			{
-				routes.MapRoute(
+			{   routes.MapRoute(
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
+
+				routes.MapRoute(
+				  name: "areas",
+				  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 			});
 		}
 	}
