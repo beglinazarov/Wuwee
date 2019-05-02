@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Wuwee.MvcWebUI.Account.ViewModels
+namespace Wuwee.MvcWebUI.Identity.ViewModels
 {
     public class RegisterViewModel
     {

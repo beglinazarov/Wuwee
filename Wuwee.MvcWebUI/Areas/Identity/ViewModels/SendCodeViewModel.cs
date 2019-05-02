@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Wuwee.MvcWebUI.Account.ViewModels
+namespace Wuwee.MvcWebUI.Identity.ViewModels
 {
     public class SendCodeViewModel
     {

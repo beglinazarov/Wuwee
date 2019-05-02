@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Wuwee.MvcWebUI.Account.ViewModels;
+using Wuwee.MvcWebUI.Identity.ViewModels;
 using Wuwee.MvcWebUI.Auth;
 using Wuwee.MvcWebUI.Controllers;
 using Wuwee.MvcWebUI.ServicesProviders;
 using XWorkUp.AspNetCoreMvc.Auth;
 
-namespace Wuwee.MvcWebUI.Areas.Account.Controllers
+namespace Wuwee.MvcWebUI.Areas.Identity.Controllers
 {
+	[Area("Identity")]
     [Authorize]
 	public class AccountController : Controller
     {

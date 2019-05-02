@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Wuwee.MvcWebUI.Account.ViewModels
+namespace Wuwee.MvcWebUI.Identity.ViewModels
 {
     public class VerifyCodeViewModel
     {

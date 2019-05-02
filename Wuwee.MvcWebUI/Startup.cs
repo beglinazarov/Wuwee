@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Wuwee.MvcWebUI.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Wuwee.MvcWebUI.Auth;
+using Wuwee.MvcWebUI.ServicesProviders;
 
 namespace Wuwee.MvcWebUI
 {
@@ -39,12 +41,50 @@ namespace Wuwee.MvcWebUI
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
 
-			services.AddDefaultIdentity<IdentityUser>()
+			services.ConfigureApplicationCookie(options =>
+			{
+				// Cookie settings
+				options.Cookie.HttpOnly = true;
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+				options.LoginPath = new PathString("/Identity/Account/Login");
+				options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+				options.SlidingExpiration = true;
+			});
+
+			//services.AddDefaultIdentity<IdentityUser>()
 			//services.AddIdentity<ApplicationUser, IdentityRole>()
+				
+			services.AddIdentityCore<ApplicationUser>(options =>
+			{
+				options.Password.RequiredLength = 8;
+				options.Password.RequireNonAlphanumeric = true;
+				options.Password.RequireUppercase = true;
+				options.User.RequireUniqueEmail = true;
+				options.SignIn.RequireConfirmedEmail = false;
+				//options.SignIn.RequireConfirmedPhoneNumber = true;
+
+			})
+				.AddRoles<IdentityRole>()
+				//	.AddUserStore<UserStore>()
+				.AddSignInManager<SignInManager<ApplicationUser>>()
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>()
 				.AddDefaultTokenProviders();
 
+			services.AddAuthentication(o =>
+			{
+				o.DefaultScheme = IdentityConstants.ApplicationScheme;
+				o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+			})
+			.AddIdentityCookies(o => { });
+
+			services.AddMemoryCache();
+			services.AddSession();
+
+			// Add application services.
+			services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("AuthMessageSenderOptions"));
+			services.AddSingleton<IEmailSender, AuthMessageSender>();
+			services.AddTransient<ISmsSender, AuthMessageSender>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
@@ -71,15 +111,16 @@ namespace Wuwee.MvcWebUI
 			app.UseAuthentication();
 
 			//app.UseIdentity();
-
 			app.UseMvc(routes =>
-			{   routes.MapRoute(
+			{
+				//areas
+				routes.MapRoute(
+					name: "areas",
+					template: "{area:exists}/{controller=Account}/{action=Login}");
+				
+				routes.MapRoute(
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
-
-				routes.MapRoute(
-				  name: "areas",
-				  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 			});
 		}
 	}
